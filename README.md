@@ -6,6 +6,7 @@ gdalwarp -t_srs EPSG:3857 -of vrt IV_CBI_RIO_MARIA_AGUILAR.TIF /vsistdout/ | gda
 del IV_CBI_RIO_MARIA_AGUILAR.*
 gdalwarp -t_srs EPSG:4326 -of vrt IV_CBI_RIO_MARIA_AGUILAR_WEB.TIF /vsistdout/ | gdal_translate -co compress=lzw  /vsistdin/ IV_CBI_RIO_MARIA_AGUILAR.TIF
 
+# Reclasificación de infraestructura natural y gris
 python %CONDA_PREFIX%\Scripts\gdal_calc.py -A IV_CBI_RIO_MARIA_AGUILAR_WEB.TIF --calc="(A<=10)*100 + (A>=11)*(A<=12)*200 + (A>12)*100" --outfile IV_CBI_RIO_MARIA_AGUILAR_INFNATGRIS_WEB_TMP.TIF
 gdal_translate -co compress=lzw IV_CBI_RIO_MARIA_AGUILAR_INFNATGRIS_WEB_TMP.TIF IV_CBI_RIO_MARIA_AGUILAR_INFNATGRIS_WEB.TIF
 gdalwarp -t_srs EPSG:4326 -of vrt IV_CBI_RIO_MARIA_AGUILAR_INFNATGRIS_WEB.TIF /vsistdout/ | gdal_translate -co compress=lzw  /vsistdin/ IV_CBI_RIO_MARIA_AGUILAR_INFNATGRIS.TIF
