@@ -92,9 +92,16 @@ del IV_SAN_JOSE_INFNATGRIS_WEB_TMP.TIF
 ## Corredores-cantones
 ```shell
 cd corredores-cantones
+
 gdalwarp -t_srs EPSG:3857 -of vrt IV_CORREDORES_CANTONES.TIF /vsistdout/ | gdal_translate -co compress=lzw  /vsistdin/ IV_CORREDORES_CANTONES_WEB.TIF
 del IV_CORREDORES_CANTONES.*
 gdalwarp -t_srs EPSG:4326 -of vrt IV_CORREDORES_CANTONES_WEB.TIF /vsistdout/ | gdal_translate -co compress=lzw  /vsistdin/ IV_CORREDORES_CANTONES.TIF
+
+# Reclasificación de infraestructura natural y gris
+python %CONDA_PREFIX%\Scripts\gdal_calc.py -A IV_CORREDORES_CANTONES_WEB.TIF --calc="(A<=10)*100 + (A>=11)*(A<=12)*200 + (A>12)*100" --outfile IV_CORREDORES_CANTONES_INFNATGRIS_WEB_TMP.TIF
+gdal_translate -co compress=lzw IV_CORREDORES_CANTONES_INFNATGRIS_WEB_TMP.TIF IV_CORREDORES_CANTONES_INFNATGRIS_WEB.TIF
+gdalwarp -t_srs EPSG:4326 -of vrt IV_CORREDORES_CANTONES_INFNATGRIS_WEB.TIF /vsistdout/ | gdal_translate -co compress=lzw  /vsistdin/ IV_CORREDORES_CANTONES_INFNATGRIS.TIF
+del IV_CORREDORES_CANTONES_INFNATGRIS_WEB_TMP.TIF
 ```
 
 ## Corredores
