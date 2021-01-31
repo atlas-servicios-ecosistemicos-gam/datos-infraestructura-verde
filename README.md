@@ -77,9 +77,16 @@ del IV_MONTES_DE_OCA_INFNATGRIS_WEB_TMP.TIF
 ## San José
 ```shell
 cd sanjose
+
 gdalwarp -t_srs EPSG:3857 -of vrt IV_SAN_JOSE.TIF /vsistdout/ | gdal_translate -co compress=lzw  /vsistdin/ IV_SAN_JOSE_WEB.TIF
 del IV_SAN_JOSE.*
 gdalwarp -t_srs EPSG:4326 -of vrt IV_SAN_JOSE_WEB.TIF /vsistdout/ | gdal_translate -co compress=lzw  /vsistdin/ IV_SAN_JOSE.TIF
+
+# Reclasificación de infraestructura natural y gris
+python %CONDA_PREFIX%\Scripts\gdal_calc.py -A IV_SAN_JOSE_WEB.TIF --calc="(A<=10)*100 + (A>=11)*(A<=12)*200 + (A>12)*100" --outfile IV_SAN_JOSE_INFNATGRIS_WEB_TMP.TIF
+gdal_translate -co compress=lzw IV_SAN_JOSE_INFNATGRIS_WEB_TMP.TIF IV_SAN_JOSE_INFNATGRIS_WEB.TIF
+gdalwarp -t_srs EPSG:4326 -of vrt IV_SAN_JOSE_INFNATGRIS_WEB.TIF /vsistdout/ | gdal_translate -co compress=lzw  /vsistdin/ IV_SAN_JOSE_INFNATGRIS.TIF
+del IV_SAN_JOSE_INFNATGRIS_WEB_TMP.TIF
 ```
 
 ## Corredores-cantones
