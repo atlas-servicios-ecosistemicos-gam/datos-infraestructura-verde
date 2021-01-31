@@ -62,9 +62,16 @@ del IV_LA_UNION_INFNATGRIS_WEB_TMP.TIF
 ## Montes de Oca
 ```shell
 cd montesdeoca
+
 gdalwarp -t_srs EPSG:3857 -of vrt IV_MONTES_DE_OCA.TIF /vsistdout/ | gdal_translate -co compress=lzw  /vsistdin/ IV_MONTES_DE_OCA_WEB.TIF
 del IV_MONTES_DE_OCA.*
 gdalwarp -t_srs EPSG:4326 -of vrt IV_MONTES_DE_OCA_WEB.TIF /vsistdout/ | gdal_translate -co compress=lzw  /vsistdin/ IV_MONTES_DE_OCA.TIF
+
+# Reclasificación de infraestructura natural y gris
+python %CONDA_PREFIX%\Scripts\gdal_calc.py -A IV_MONTES_DE_OCA_WEB.TIF --calc="(A<=10)*100 + (A>=11)*(A<=12)*200 + (A>12)*100" --outfile IV_MONTES_DE_OCA_INFNATGRIS_WEB_TMP.TIF
+gdal_translate -co compress=lzw IV_MONTES_DE_OCA_INFNATGRIS_WEB_TMP.TIF IV_MONTES_DE_OCA_INFNATGRIS_WEB.TIF
+gdalwarp -t_srs EPSG:4326 -of vrt IV_MONTES_DE_OCA_INFNATGRIS_WEB.TIF /vsistdout/ | gdal_translate -co compress=lzw  /vsistdin/ IV_MONTES_DE_OCA_INFNATGRIS.TIF
+del IV_MONTES_DE_OCA_INFNATGRIS_WEB_TMP.TIF
 ```
 
 ## San José
