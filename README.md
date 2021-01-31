@@ -47,9 +47,16 @@ del IV_CURRIDABAT_INFNATGRIS_WEB_TMP.TIF
 ## La Unión
 ```shell
 cd launion
+
 gdalwarp -t_srs EPSG:3857 -of vrt IV_LA_UNION.TIF /vsistdout/ | gdal_translate -co compress=lzw  /vsistdin/ IV_LA_UNION_WEB.TIF
 del IV_LA_UNION.*
 gdalwarp -t_srs EPSG:4326 -of vrt IV_LA_UNION_WEB.TIF /vsistdout/ | gdal_translate -co compress=lzw  /vsistdin/ IV_LA_UNION.TIF
+
+# Reclasificación de infraestructura natural y gris
+python %CONDA_PREFIX%\Scripts\gdal_calc.py -A IV_LA_UNION_WEB.TIF --calc="(A<=10)*100 + (A>=11)*(A<=12)*200 + (A>12)*100" --outfile IV_LA_UNION_INFNATGRIS_WEB_TMP.TIF
+gdal_translate -co compress=lzw IV_LA_UNION_INFNATGRIS_WEB_TMP.TIF IV_LA_UNION_INFNATGRIS_WEB.TIF
+gdalwarp -t_srs EPSG:4326 -of vrt IV_LA_UNION_INFNATGRIS_WEB.TIF /vsistdout/ | gdal_translate -co compress=lzw  /vsistdin/ IV_LA_UNION_INFNATGRIS.TIF
+del IV_LA_UNION_INFNATGRIS_WEB_TMP.TIF
 ```
 
 ## Montes de Oca
